@@ -35,11 +35,12 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Product price is required'],
         trim: true,
-        min: [20, 'to long product price']
+        max: [200000, 'to long product price']
     },
     priceAfterDiscount: {
         type: Number
     },
+
     colors: [String],
     imageCover: {
         type: String,
@@ -58,6 +59,7 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'SubCategory',
     }],
+    
     brand: {
         type: mongoose.Schema.ObjectId,
         ref: 'Brand'

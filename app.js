@@ -3,8 +3,8 @@ const express = require('express')
 const app = express()
 
 const dotenv = require('dotenv')
-
-const mprgan = require('morgan')
+// const fs = require('fs');
+// const mprgan = require('morgan')
 const ApiError = require('./utils/apiError')
 
 dotenv.config({path:'./config.env'})
@@ -21,13 +21,12 @@ const categoryRoute = require('./routes/categoryRoute')
 const brandRoute = require('./routes/brandRoute')
 const subcategoryRoute = require('./routes/subCategoryRoute')
 const productRoute = require('./routes/productRoute')
+// const productModel = require('./models/productModel')
 //conct db
 dbmongoose()
-console.log(process.env.NODE_ENV)
+// console.log(process.env.NODE_ENV)
 //EndPoints to get images
 app.use('/images' , express.static('./uploads'))
-
-
 
 
 // endpoint
