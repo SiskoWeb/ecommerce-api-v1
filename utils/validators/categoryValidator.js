@@ -2,35 +2,37 @@ const { check, body } = require('express-validator');
 const slugify = require('slugify');
 const validatorMiddlewar = require('../../middleware/validatorMiddlewar')
 
-
-exports.getBrandValidator = [
-    check('id').isMongoId().withMessage('invalid brand id format'), validatorMiddlewar
+// rules validator = https://youtu.be/Mn50B_dBYu4?list=PLDQ11FgmbqQNFuGQTKbAIGEyOKWUGBs6i
+exports.getCategoryValidator = [
+    check('id').isMongoId()
+        .withMessage('Invalid category id format')
+    , validatorMiddlewar
 ]
 
-exports.createBrandalidator = [
-    check('name').notEmpty().withMessage('Brand Required')
-        .isLength({ min: 2 }).withMessage('must be longer then 3 letter ')
+exports.createCategoryValidator = [
+    check('name').notEmpty().withMessage('category Required')
+        .isLength({ min: 3 }).withMessage('must be longer then 3 letter ')
         .isLength({ max: 32 }).withMessage('must be  max 32 letters')
         .custom((val, { req }) => {
             req.body.slug = slugify(val);
             return true;
         })
-
     , validatorMiddlewar
 ]
-exports.updatetBrandalidator = [
+exports.updatetCategoryValidator = [
     check('id').isMongoId()
-        .withMessage('Invalid Brand id format')
-        ,
+        .withMessage('Invalid category id format'),
+
     body('name').custom((val, { req }) => {
         req.body.slug = slugify(val);
         return true;
     })
+
     , validatorMiddlewar
 ]
 
-exports.deletetBrandalidator = [
+exports.deletetCategoryValidator = [
     check('id').isMongoId()
-        .withMessage('Invalid Brand id format')
+        .withMessage('Invalid category id format')
     , validatorMiddlewar
 ]

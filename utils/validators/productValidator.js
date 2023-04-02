@@ -1,4 +1,5 @@
-const { check } = require('express-validator');
+const { check, body } = require('express-validator');
+const slugify = require('slugify');
 const validatorMiddlewar = require('../../middleware/validatorMiddlewar')
 const categoryModel = require('../../models/categoryModel');
 const subcategoryModel = require('../../models/subCategoryModel');
@@ -115,13 +116,20 @@ exports.createProductalidator = [
         .isLength({ min: 5 }).withMessage(' ratingsAverage is short ')
     ,
     check('ratingsQuantity').optional().isNumeric().withMessage('ratingsQuantity MUST BE NUMBER')
-
+        .custom((val, { req }) => {
+            req.body.slug = slugify(val);
+            return true;
+        })
 
     , validatorMiddlewar
 ]
 exports.updatetProductalidator = [
     check('id').isMongoId()
-        .withMessage('Invalid Product id format')
+        .withMessage('Invalid Product id format'),
+    body('title').custom((val, { req }) => {
+        req.body.slug = slugify(val);
+        return true;
+    })
     , validatorMiddlewar
 ]
 

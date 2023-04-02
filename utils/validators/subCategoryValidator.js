@@ -1,37 +1,42 @@
-const { check } = require('express-validator');
-const validatorMiddlewar = require('../../middleware/validatorMiddlewar')
+const slugify = require('slugify');
+const { check, body } = require('express-validator');
+const validatorMiddleware = require('../../middleware/validatorMiddlewar');
 
+exports.getSubCategoryValidator = [
+    check('id').isMongoId().withMessage('Invalid Subcategory id format'),
+    validatorMiddleware,
+];
 
 exports.createSubCategoryValidator = [
-    check('name').notEmpty().withMessage('subcategory required')
-        .isLength({ min: 2 }).withMessage('to short')
-        .isLength({ max: 30 }).withMessage('to long')
-    , check('category').notEmpty().withMessage('category required')
-    , check('category').isMongoId().withMessage('Invalid category id format')
-    , validatorMiddlewar
+    check('name')
+        .notEmpty()
+        .withMessage('SubCategory required')
+        .isLength({ min: 2 })
+        .withMessage('Too short Subcategory name')
+        .isLength({ max: 32 })
+        .withMessage('Too long Subcategory name')
+        .custom((val, { req }) => {
+            req.body.slug = slugify(val);
+            return true;
+        }),
+    check('category')
+        .notEmpty()
+        .withMessage('subCategory must be belong to category')
+        .isMongoId()
+        .withMessage('Invalid Category id format'),
+    validatorMiddleware,
+];
 
-]
+exports.updateSubCategoryValidator = [
+    check('id').isMongoId().withMessage('Invalid Subcategory id format'),
+    body('name').custom((val, { req }) => {
+        req.body.slug = slugify(val);
+        return true;
+    }),
+    validatorMiddleware,
+];
 
-exports.getSuvCategoryByIDValidator = [
-    check('id').isMongoId()
-        .withMessage('Invalid Subcategory id format')
-
-    , validatorMiddlewar
-
-]
-
-exports.updateSuvCategoryByIDValidator = [
-    check('id').isMongoId()
-        .withMessage('Invalid Subcategory id format')
-
-    , validatorMiddlewar
-
-]
-
-exports.deleteSubCategoryByIDValidator = [
-    check('id').isMongoId()
-        .withMessage('Invalid Subcategory id format')
-
-    , validatorMiddlewar
-
-]
+exports.deleteSubCategoryValidator = [
+    check('id').isMongoId().withMessage('Invalid SubCategory id format'),
+    validatorMiddleware,
+];

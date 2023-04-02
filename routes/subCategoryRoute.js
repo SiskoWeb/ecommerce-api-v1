@@ -1,28 +1,34 @@
-const express = require('express')
+const express = require('express');
 
+const {
+  createSubCategory,
+  getSubCategory,
+  getSubCategories,
+  updateSubCategory,
+  deleteSubCategory,
+  setCategoryIdToBody,
+  createFilterObj,
+} = require('../services/subCategoryService');
+const {
+  createSubCategoryValidator,
+  getSubCategoryValidator,
+  updateSubCategoryValidator,
+  deleteSubCategoryValidator,
+} = require('../utils/validators/subCategoryValidator');
 
-// const router = express.Router()
+// mergeParams: Allow us to access parameters on other routers
+// ex: We need to access categoryId from category router
+const router = express.Router({ mergeParams: true });
 
-// mergParams : Allow us to access parameters on othher routers
-const router = express.Router({ mergeParams: true })
+router
+  .route('/')
+  .post(setCategoryIdToBody, createSubCategoryValidator, createSubCategory)
+  .get(createFilterObj, getSubCategories);
+router
+  .route('/:id')
+  .get(getSubCategoryValidator, getSubCategory)
+  .put(updateSubCategoryValidator, updateSubCategory)
+  .delete(deleteSubCategoryValidator, deleteSubCategory);
 
-const {setCreateCategoryIdBody, setCategoryIdBody, addSubCategory, getSubCategory, getSubCategoryById, updateSubCategory, deletSubCategory, getSubCategorybyCategory } = require('../services/subCategoryService')
-const { createSubCategoryValidator, getSuvCategoryByIDValidator, deleteSubCategoryByIDValidator, updateSuvCategoryByIDValidator } = require('../utils/validators/subCategoryValidator')
+module.exports = router;
 
-
-
-router.route('/')
-
-    .post(setCreateCategoryIdBody, createSubCategoryValidator, addSubCategory)
-    .get(setCategoryIdBody,getSubCategory)
-
-router.route('/:id')
-
-    .get(getSuvCategoryByIDValidator, getSubCategoryById)
-    .put(updateSuvCategoryByIDValidator, updateSubCategory)
-    .delete(deleteSubCategoryByIDValidator, deletSubCategory)
-
-
-
-
-module.exports = router

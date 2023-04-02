@@ -1,3 +1,5 @@
+const path = require('path')
+
 const express = require('express')
 
 const app = express()
@@ -17,23 +19,63 @@ app.use(express.json())
 const dbmongoose =  require('./config/connect')
 const globalError = require('./middleware/errorMiddleware')
 
+// eslint-disable-next-line import/order
+const fs = require('fs');
+
 const categoryRoute = require('./routes/categoryRoute')
 const brandRoute = require('./routes/brandRoute')
 const subcategoryRoute = require('./routes/subCategoryRoute')
 const productRoute = require('./routes/productRoute')
+const productModele = require('./models/productModel')
 // const productModel = require('./models/productModel')
 //conct db
 dbmongoose()
+
+
+// // Delete data from DB
+// const destroyData = async () => {
+//     try {
+//         await productModele.deleteMany();
+//         console.log('Data Destroyed');
+//         // process.exit();
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
+
+// destroyData()
+
+
+// const products = JSON.parse(fs.readFileSync('./products.json'));
+
+
+// // Insert data into DB
+// const insertData = async () => {
+//     try {
+//         await productModele.create(products);
+
+//         console.log('Data Inserted');
+//         // process.exit();
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+// insertData()
+
+
+
 // console.log(process.env.NODE_ENV)
-//EndPoints to get images
-app.use('/images' , express.static('./uploads'))
+// //EndPoints to get images
+// app.use('/images' , express.static('./uploads'))
+app.use( express.static(path.join(__dirname, 'uploads')))
 
 
 // endpoint
 app.use('/api/v1/categories' , categoryRoute)
 app.use('/api/v1/subcategories' , subcategoryRoute)
 app.use('/api/v1/brand' , brandRoute)
-app.use('/api/v1/product' , productRoute)
+app.use('/api/v1/products' , productRoute)
 
 
 app.all('*',(req,res,next)=>{
