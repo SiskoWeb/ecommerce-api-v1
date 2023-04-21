@@ -7,6 +7,7 @@ const { getCategoryValidator, createCategoryValidator, updatetCategoryValidator,
 const subCategoryRoute = require('./subCategoryRoute')
 // every  model or 7adat 3ndo route wa7d ms kanbedlo gha wach get ola post ...
 
+const AuthService = require('../services/authService')
 
 // true but longer
 // router.post('/', addtCategory)
@@ -16,7 +17,7 @@ router.use('/:category/subcategories', subCategoryRoute)
 //new one // https://youtu.be/Q2YJKLzI8MU?list=PLDQ11FgmbqQNFuGQTKbAIGEyOKWUGBs6i
 router.route('/')
     .get(getCategories)
-    .post(imageUploaderCategory, resizeImage, createCategoryValidator, addtCategory)
+    .post(AuthService.protect, AuthService.allowedTo('admin', "manager"), imageUploaderCategory, resizeImage, createCategoryValidator, addtCategory)
 
 
 router.route('/:id')

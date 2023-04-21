@@ -11,7 +11,7 @@ const ApiError = require('./utils/apiError')
 
 dotenv.config({path:'./config.env'})
 
-
+// console.log(process.env.NODE_ENV)
 // make backend read json
 app.use(express.json())
 // app.use(mprgan('dev'))
@@ -26,6 +26,8 @@ const categoryRoute = require('./routes/categoryRoute')
 const brandRoute = require('./routes/brandRoute')
 const subcategoryRoute = require('./routes/subCategoryRoute')
 const productRoute = require('./routes/productRoute')
+const userRoute = require('./routes/userRoute')
+const authRoute = require('./routes/authRoute')
 const productModele = require('./models/productModel')
 // const productModel = require('./models/productModel')
 //conct db
@@ -76,6 +78,8 @@ app.use('/api/v1/categories' , categoryRoute)
 app.use('/api/v1/subcategories' , subcategoryRoute)
 app.use('/api/v1/brand' , brandRoute)
 app.use('/api/v1/products' , productRoute)
+app.use('/api/v1/users' , userRoute)
+app.use('/api/v1/auth' , authRoute)
 
 
 app.all('*',(req,res,next)=>{
@@ -88,9 +92,9 @@ app.all('*',(req,res,next)=>{
     // midelware handel error global  inide express = every error will handle
     app.use(globalError)
         
+    const PORT = process.env.PORT || 3000;
 
-
-const servier = app.listen(3000, () => {
+const servier = app.listen(PORT, () => {
     console.log('server work')
 })
 

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const AddUrl = require('../middleware/addUrlImg')
+
 
 
 // aanother style to create model
@@ -26,6 +28,28 @@ const categorySchema = mongoose.Schema({
     { timestamps: true }
 
 )
+
+
+console.log(process.env.BASE_URL)
+
+
+const postUrl = new AddUrl(categorySchema)
+
+
+
+
+postUrl.post('categories')
+postUrl.save('categories')
+
+
+// categorySchema.post('init', (doc) => {
+//     if (doc.image) {
+//         const imageUrl = `${process.env.BASE_URL}/categories/${doc.image}`
+//         doc.image = imageUrl
+//     }
+
+// });
+
 //2 create model 
 const categoryModel = mongoose.model('Category', categorySchema)
 

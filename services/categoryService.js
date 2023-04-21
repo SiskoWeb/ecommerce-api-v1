@@ -54,7 +54,9 @@ const {uploadSingleImage} = require('../middleware/uploadImageMiddleWar')
 exports.resizeImage = asyncHandler(async (req, res, next) => {
 
     const fileName = `categories-${Date.now()}-${Math.round(Math.random() * 1E9)}.jpeg`
+    if (req.file) {
 
+  
     await sharp(req.file.buffer)
         .resize(600, 600)
         .toFormat('jpeg')
@@ -62,6 +64,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
         .toFile(`uploads/categories/${fileName}`)
     req.body.image = fileName
     // console.log(req.file)
+}
     next()
 })
 

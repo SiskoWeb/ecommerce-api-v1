@@ -116,10 +116,11 @@ exports.createProductalidator = [
         .isLength({ min: 5 }).withMessage(' ratingsAverage is short ')
     ,
     check('ratingsQuantity').optional().isNumeric().withMessage('ratingsQuantity MUST BE NUMBER')
-        .custom((val, { req }) => {
-            req.body.slug = slugify(val);
-            return true;
-        })
+    ,
+    body('title').custom((val, { req }) => {
+        req.body.slug = slugify(val);
+        return true;
+    })
 
     , validatorMiddlewar
 ]

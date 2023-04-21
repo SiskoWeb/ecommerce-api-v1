@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const AddUrl = require('../middleware/addUrlImg')
+
 const brandSchema = mongoose.Schema({
     name: {
         type: String,
@@ -22,6 +24,14 @@ const brandSchema = mongoose.Schema({
     { timestamps: true }
 
 )
+
+const postUrl = new AddUrl(brandSchema)
+
+
+
+
+postUrl.post('brands')
+postUrl.save('brands')
 
 const brandModel = mongoose.model('Brand', brandSchema)
 

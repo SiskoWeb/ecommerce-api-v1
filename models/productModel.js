@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 
+const AddUrl = require('../middleware/addUrlImg')
 
-const productSchema = new mongoose.Schema({
+const productSchema = mongoose.Schema({
 
     title: {
         type: String,
@@ -47,7 +48,7 @@ const productSchema = new mongoose.Schema({
         required: [true, 'image cover is required']
 
     },
-    images: { String },
+    images: [String],
 
 
     category: {
@@ -76,7 +77,43 @@ const productSchema = new mongoose.Schema({
     }
 
 
-}, { timestamps: true })
+},
+
+    { timestamps: true })
+
+
+
+
+
+
+const setImageUrl = (doc) => {
+    if (doc.imageCover) {
+        const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`
+        doc.imageCover = imageUrl
+    }
+    if (doc.images) {
+        // also we can use foreach
+        // eslint-disable-next-line array-callback-return
+        doc.images.map((img, index) => {
+
+            const imageUrl = `${process.env.BASE_URL}/products/${img}`
+            doc.images[index] = imageUrl
+        })
+
+    }
+}
+
+productSchema.post('init', (doc) => {
+    setImageUrl(doc)
+
+});
+
+productSchema.post('save', (doc) => {
+    setImageUrl(doc)
+
+});
+
+
 
 // Mongoose query middleware
 productSchema.pre(/^find/, function (next) {
@@ -91,3 +128,4 @@ productSchema.pre(/^find/, function (next) {
 const productModele = mongoose.model('Products', productSchema)
 
 module.exports = productModele
+
