@@ -2,11 +2,13 @@ const jwt = require('jsonwebtoken')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 
+const crypto = require('crypto');
 
 const asyncHandler = require('express-async-handler')
 
 const userModele = require('../models/userModel')
-const ApiError = require('../utils/apiError')
+const ApiError = require('../utils/apiError');
+const sendEmail = require('../utils/sendEmail').default;
 
 const createToken = (payload) =>
     jwt.sign({ userId: payload }, "process.env.SECRET_KEY_JWT", {
@@ -99,13 +101,100 @@ exports.protect = asyncHandler(async (req, res, next) => {
 // @desc    Authorization (User Permissions)
 // ["admin", "manager"]
 exports.allowedTo = (...roles) =>
-  asyncHandler(async (req, res, next) => {
-    // 1) access roles
-    // 2) access registered user (req.user.role)
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new ApiError('You are not allowed to access this route', 403)
-      );
+    asyncHandler(async (req, res, next) => {
+        // 1) access roles
+        // 2) access registered user (req.user.role)
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new ApiError('You are not allowed to access this route', 403)
+            );
+        }
+        next();
+    });
+
+
+
+// @desc    forget password
+// @ROUTE GET /API/V1/AUTH/forgetpassword
+// @DACCESS PUBLIC
+exports.forgetPassword = asyncHandler(async (req, res, next) => {
+
+    //1)get user email
+    const user = await userModele.findOne({ email: req.body.email })
+    if (!user) {
+        return next(
+            new ApiError(`There is no user with that email ${req.body.email}`, 403)
+        );
     }
-    next();
-  });
+
+    //2) if user exist , generate hash random 6 digitls and save it in db
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedResetCode = crypto
+        .createHash('sha256')
+        .update(resetCode)
+        .digest('hex');
+
+    console.log(resetCode)
+    console.log(hashedResetCode)
+
+
+    // Save hashed password reset code into db
+    user.passwordResetCode = hashedResetCode;
+    // Add expiration time for password reset code (10 min)
+    user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    user.passwordResetVerified = false;
+
+    await user.save();
+
+
+
+
+    // 3) Send the reset code via email
+    const message = `Hi ${user.name},\n We received a request to reset the password on your E-shop Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The E-shop Team`;
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Your password reset code (valid for 10 min)',
+            message,
+        });
+    } catch (err) {
+        user.passwordResetCode = undefined;
+        user.passwordResetExpires = undefined;
+        user.passwordResetVerified = undefined;
+
+        await user.save();
+        return next(new ApiError('There is an error in sending email', 500));
+    }
+
+    res
+        .status(200)
+        .json({ status: 'Success', message: 'Reset code sent to email' });
+});
+
+
+// @desc    reset code 
+// @ROUTE GET /API/V1/AUTH/resetCode
+// @DACCESS PUBLIC
+exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
+
+    // 1) get user based on reset code
+    const hashedResetCode = crypto
+        .createHash('sha256')
+        .update(req.body.resetCode)
+        .digest('hex');
+
+    const user = await userModele.findOne({
+        passwordResetCode: hashedResetCode,
+        passwordResetExpires: { $gt: Date.now() }
+    })
+
+    if (!user) {
+        return next(new ApiError('rest code invalide or expired'))
+    }
+
+    // 2) reset code valid
+    user.passwordResetVerified = true;
+    user.save()
+
+
+})

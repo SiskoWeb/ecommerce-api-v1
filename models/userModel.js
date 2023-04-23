@@ -28,7 +28,10 @@ const userSchema = mongoose.Schema({
         minlegth: [6, 'to short password'],
 
     },
-    passwordChangedAt:Date,
+    passwordChangedAt: Date,
+    passwordResetCode: String,
+    passwordResetExpires: Date,
+    passwordResetVerified: Boolean,
     role: {
         type: String,
         enum: ['user', 'admin'],
@@ -37,8 +40,8 @@ const userSchema = mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
-      }
-   
+    }
+
 },
     { timestamps: true }
 
