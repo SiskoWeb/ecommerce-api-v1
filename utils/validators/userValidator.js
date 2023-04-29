@@ -64,29 +64,29 @@ exports.updatetUseralidator = [
         .withMessage('Invalid User id format')
     ,
     check('email')
-    .notEmpty()
-    .withMessage('Email required')
-    .isEmail()
-    .withMessage('Invalid email address')
-    .custom((val) =>
-        User.findOne({ email: val }).then((user) => {
-            if (user) {
-                return Promise.reject(new Error('E-mail already in user'));
-            }
-        })
-    ),
+        .notEmpty()
+        .withMessage('Email required')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .custom((val) =>
+            User.findOne({ email: val }).then((user) => {
+                if (user) {
+                    return Promise.reject(new Error('E-mail already in user'));
+                }
+            })
+        ),
     check('phone')
-    .optional()
-    .isMobilePhone(['ar-EG', 'ar-SA'])
-    .withMessage('Invalid phone number only accepted Egy and SA Phone numbers'),
+        .optional()
+        .isMobilePhone(['ar-EG', 'ar-SA'])
+        .withMessage('Invalid phone number only accepted Egy and SA Phone numbers'),
 
-check('profileImg').optional(),
-check('role').optional(),
+    check('profileImg').optional(),
+    check('role').optional(),
     body('name').optional().custom((val, { req }) => {
         req.body.slug = slugify(val);
         return true;
     })
-    
+
     , validatorMiddlewar
 ]
 
@@ -129,3 +129,30 @@ exports.deletetUseralidator = [
         .withMessage('Invalid User id format')
     , validatorMiddlewar
 ]
+
+exports.updateLoggedUserValidator = [
+    body('name')
+        .optional()
+        .custom((val, { req }) => {
+            req.body.slug = slugify(val);
+            return true;
+        }),
+    check('email')
+        .notEmpty()
+        .withMessage('Email required')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .custom((val) =>
+            User.findOne({ email: val }).then((user) => {
+                if (user) {
+                    return Promise.reject(new Error('E-mail already in user'));
+                }
+            })
+        ),
+    check('phone')
+        .optional()
+        .isMobilePhone(['ar-EG', 'ar-SA'])
+        .withMessage('Invalid phone number only accepted Egy and SA Phone numbers'),
+
+    validatorMiddlewar,
+];

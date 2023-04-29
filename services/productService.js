@@ -91,7 +91,7 @@ exports.getAllProduct = factory.getAll(ProductModel, 'Products');
 // @desc    Get specific category by id
 // @route   GET /api/v1/categories/:id
 // @access  Public
-exports.getProductById = factory.getOne(ProductModel);
+exports.getProductById = factory.getOne(ProductModel, "reviews");
 
 // @desc    Create category
 // @route   POST  /api/v1/categories

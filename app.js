@@ -28,6 +28,11 @@ const subcategoryRoute = require('./routes/subCategoryRoute')
 const productRoute = require('./routes/productRoute')
 const userRoute = require('./routes/userRoute')
 const authRoute = require('./routes/authRoute')
+const reviewRoute = require('./routes/reviewRoute')
+const wishlistRoute = require('./routes/wishlistRoute')
+const adressRoute = require('./routes/adressRoute')
+const couponRoute = require('./routes/couponRoute')
+const cartRoute = require('./routes/cartRoute')
 const productModele = require('./models/productModel')
 // const productModel = require('./models/productModel')
 //conct db
@@ -80,6 +85,11 @@ app.use('/api/v1/brand' , brandRoute)
 app.use('/api/v1/products' , productRoute)
 app.use('/api/v1/users' , userRoute)
 app.use('/api/v1/auth' , authRoute)
+app.use('/api/v1/review' , reviewRoute)
+app.use('/api/v1/wishlist' , wishlistRoute)
+app.use('/api/v1/adress' , adressRoute)
+app.use('/api/v1/coupon' , couponRoute)
+app.use('/api/v1/cart', cartRoute);
 
 
 app.all('*',(req,res,next)=>{

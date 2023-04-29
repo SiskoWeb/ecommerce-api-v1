@@ -3,6 +3,7 @@ const brandModel = require('../models/brandModel')
 const categoryModle = require('../models/categoryModel')
 const subCategoryModele = require('../models/subCategoryModel');
 const userModel = require('../models/userModel');
+const reviewsModel = require('../models/reviewsModel');
 
 class ApiFeatures {
     constructor(mongooseQuery, queryString) {
@@ -71,6 +72,11 @@ class ApiFeatures {
                 query = { name: { $regex: this.queryString.keyword, $options: 'i' } };
                 this.mongooseQuery = userModel.find(query);
             }
+            else if (modelName === 'review') {
+                query = { name: { $regex: this.queryString.keyword, $options: 'i' } };
+                this.mongooseQuery = reviewsModel.find(query);
+            }
+
             else {
                 query = { name: { $regex: this.queryString.keyword, $options: 'i' } };
                 this.mongooseQuery = this.mongooseQuery.find(query);

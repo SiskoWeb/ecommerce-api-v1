@@ -10,6 +10,8 @@ const userModele = require('../models/userModel')
 const ApiError = require('../utils/apiError');
 const sendEmail = require('../utils/sendEmail').default;
 
+
+// create token by passing id user
 const createToken = (payload) =>
     jwt.sign({ userId: payload }, "process.env.SECRET_KEY_JWT", {
         expiresIn: '90d'
@@ -172,8 +174,8 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
 });
 
 
-// @desc    reset code 
-// @ROUTE GET /API/V1/AUTH/resetCode
+// @desc    verifyResetCode
+// @ROUTE GET /API/V1/AUTH/verifyResetCode
 // @DACCESS PUBLIC
 exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
 
@@ -195,6 +197,68 @@ exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
     // 2) reset code valid
     user.passwordResetVerified = true;
     user.save()
-
+    res.status(200).json({
+        status: 'Success',
+      });
 
 })
+
+
+// @desc    Reset password
+// @route   POST /api/v1/auth/resetPassword
+// @access  Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    // 1) Get user based on email
+    const user = await userModele.findOne({ email: req.body.email });
+    if (!user) {
+      return next(
+        new ApiError(`There is no user with email ${req.body.email}`, 404)
+      );
+    }
+  
+    // 2) Check if reset code verified
+    if (!user.passwordResetVerified) {
+      return next(new ApiError('Reset code not verified', 400));
+    }
+  
+    user.password = req.body.newPassword;
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetVerified = undefined;
+  
+    await user.save();
+  
+    // 3) if everything is ok, generate token
+    const token = createToken(user._id);
+    res.status(200).json({ token });
+  });
+
+
+  // @desc    Reset password
+// @route   POST /api/v1/auth/resetPassword
+// @access  Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    // 1) Get user based on email
+    const user = await userModele.findOne({ email: req.body.email });
+    if (!user) {
+      return next(
+        new ApiError(`There is no user with email ${req.body.email}`, 404)
+      );
+    }
+  
+    // 2) Check if reset code verified
+    if (!user.passwordResetVerified) {
+      return next(new ApiError('Reset code not verified', 400));
+    }
+  
+    user.password = req.body.newPassword;
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetVerified = undefined;
+  
+    await user.save();
+  
+    // 3) if everything is ok, generate token
+    const token = createToken(user._id);
+    res.status(200).json({ token });
+  });
