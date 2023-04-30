@@ -25,6 +25,7 @@ specifiers:
   prettier: ^2.8.4
   sharp: ^0.32.0
   slugify: ^1.6.5
+  stripe: ^12.3.0
 
 dependencies:
   bcrypt: 5.1.0
@@ -41,6 +42,7 @@ dependencies:
   nodemailer: 6.9.1
   sharp: 0.32.0
   slugify: 1.6.5
+  stripe: 12.3.0
 
 devDependencies:
   eslint: 8.36.0
@@ -2745,6 +2747,14 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
     dev: true
+
+  /stripe/12.3.0:
+    resolution: {integrity: sha512-B9Q1b0gbKY/Z4fQc1Y82VpHTFLh8A67D6kdcFtgpGfTovVkI7SamE66vmVaWNHgcUjPqI8x6wVvksdRf/ucTDw==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 18.14.6
+      qs: 6.11.0
+    dev: false
 
   /supports-color/5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
